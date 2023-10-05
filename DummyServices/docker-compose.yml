@@ -1,10 +1,10 @@
 services:
-  sqldb:
+  customer:
     image: mysql:8.0
     restart: always
-    container_name: mysql_database
+    container_name: customer_database
     environment:
-      MYSQL_DATABASE: 'db'
+      MYSQL_DATABASE: 'customer'
       MYSQL_USER: 'user'
       MYSQL_PASSWORD: 'password'
       MYSQL_ROOT_PASSWORD: 'root'
@@ -13,9 +13,27 @@ services:
     expose:
       - '3306'
     volumes:
-      - mySqlDB:/var/lib/mysql
+      - customerDB:/var/lib/mysql
     networks:
       - mySql
+
+  fraud:
+    image: mysql:8.0
+    restart: always
+    container_name: fraud_database
+    environment:
+      MYSQL_DATABASE: 'fraud'
+      MYSQL_USER: 'user'
+      MYSQL_PASSWORD: 'password'
+      MYSQL_ROOT_PASSWORD: 'root'
+    ports:
+        - '3308:3306'
+    expose:
+        - '3306'
+    volumes:
+        - fraudDB:/var/lib/mysql
+    networks:
+        - mySql
 
   phpmyadmin:
     image: phpmyadmin
@@ -28,10 +46,12 @@ services:
     networks:
       - mySql
     links:
-      - sqldb:db
+      - customer:db
+      - fraud:db
 
 volumes:
-  mySqlDB:
+  customerDB:
+  fraudDB:
 
 networks:
   mySql:
